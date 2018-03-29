@@ -1,14 +1,15 @@
 body {
   margin: 0;
   padding: 0;
-  font-family: sans-serif;
+  font-family: 'Garamond';
   background-color: #eeeeee;
+  width: 100%;
+  position: absolute;
 }
 
 h1 {
   text-indent: 16px;
   font-size: 26px;
-  font-family: 'Garamond';
   color: #666666;
   margin: 16px 0;
 }
@@ -16,9 +17,13 @@ h1 {
 h2 {
   text-indent: 16px;
   font-size: 26px;
-  font-family: 'Garamond';
   color: #666666;
   margin: 0 0 16px;
+}
+
+#root {
+  position: relative;
+  width: 100%;
 }
 
 .productList {
@@ -33,11 +38,13 @@ h2 {
   padding: 16px;
   background-color: white;
   text-align: center;
+  min-height: 350px;
 }
 
 .product img {
   margin-top: 16px;
   display: inline-block;
+  max-width: 90%;
 }
 
 .product button {
@@ -50,7 +57,7 @@ h2 {
 .thumbnailWrapper {
   max-width: 90%;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 0 16px 16px;
   text-align: center;
   background-color: white;
 }
@@ -58,11 +65,29 @@ h2 {
 .thumbnail {
   width: 33%;
   display: inline-block;
-  margin-bottom: 16px;
+  margin-top: 16px;
 }
 
 .thumbnail img {
   max-width: 90%;
+}
+
+button {
+  background: #666666;
+  border-radius: 4px;
+  color: #ffffff;
+  font-size: 20px;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+  width: 90%;
+  display: block;
+  font-family: 'Garamond';  
+  margin: 16px auto;
+}
+
+button:hover {
+  background: #666666;
+  text-decoration: none;
 }
 
 

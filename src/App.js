@@ -88,8 +88,13 @@ class App extends Component {
       productsList.push(
         <div className='product'>
           <img src={zoomProduct.images[0]} alt={zoomProduct.name}/>
-          <button onClick={this.checkoutProduct.bind(this, zoomProduct)}>Buy</button>
         </div>
+      )
+
+      productsList.push(
+        <button onClick={this.checkoutProduct.bind(this, zoomProduct)}>
+          Buy {zoomProduct.name} {zoomProduct.skus.data[0].attributes.color}
+        </button>
       )
 
       const thumbnails = []
