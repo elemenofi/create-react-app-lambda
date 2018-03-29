@@ -1,28 +1,68 @@
-.App {
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background-color: #eeeeee;
+}
+
+h1 {
+  text-indent: 16px;
+  font-size: 26px;
+  font-family: 'Garamond';
+  color: #666666;
+  margin: 16px 0;
+}
+
+h2 {
+  text-indent: 16px;
+  font-size: 26px;
+  font-family: 'Garamond';
+  color: #666666;
+  margin: 0 0 16px;
+}
+
+.productList {
+  padding-top: 16px;
+  width: 90%;
+  margin: 0 auto;
+}
+
+.product {
+  max-width: 90%;
+  margin: 0 auto;
+  padding: 16px;
+  background-color: white;
   text-align: center;
 }
 
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
+.product img {
+  margin-top: 16px;
+  display: inline-block;
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+.product button {
+  display: block;
+  width: 90%;
+  margin: 16px auto;
+  padding: 8px 0;
 }
 
-.App-title {
-  font-size: 1.5em;
+.thumbnailWrapper {
+  max-width: 90%;
+  margin: 0 auto;
+  padding: 0 16px;
+  text-align: center;
+  background-color: white;
 }
 
-.App-intro {
-  font-size: large;
+.thumbnail {
+  width: 33%;
+  display: inline-block;
+  margin-bottom: 16px;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.thumbnail img {
+  max-width: 90%;
 }
+
+
