@@ -12,14 +12,9 @@ h1 {
   font-size: 26px;
   color: #666666;
   margin: 16px 0;
+  text-align: left;
 }
 
-h2 {
-  text-indent: 16px;
-  font-size: 26px;
-  color: #666666;
-  margin: 0 0 16px;
-}
 
 #root {
   position: relative;
@@ -34,7 +29,7 @@ h2 {
 
 .product {
   max-width: 90%;
-  margin: 0 auto;
+  margin: 16px auto 0;
   padding: 16px;
   background-color: white;
   text-align: center;
@@ -73,7 +68,7 @@ h2 {
 }
 
 button {
-  background: #666666;
+  background: #888888;
   border-radius: 4px;
   color: #ffffff;
   font-size: 20px;
