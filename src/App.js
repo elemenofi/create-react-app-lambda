@@ -31,13 +31,13 @@ class App extends Component {
       .then(response => response.json())
       .then(json => {
         this.setState({products: JSON.parse(json.products)})
+        console.log('Products received from Stripe', this.state.products)    
         this.processProducts()
       });
   }
 
   processProducts (subCat) {
     let {products} = this.state
-    console.log('Products received from Stripe', products)
     
     // products by name for display
     let displayProducts = {}    
@@ -176,7 +176,6 @@ class App extends Component {
       billingAddress: true,
       shippingAddress: true,
       token: (token) => {
-        console.log(token)
         fetch(`/.netlify/functions/order?sku=${product.skus.data[0].id}&curr=${product.skus.data[0].currency}&token=${token.id}&email=${token.email}`)
           .then(response => response.json())
           .then(json => console.log(json));
@@ -208,6 +207,11 @@ class CategoryItem extends Component {
   }
 
   handleItemClick (category) {
+    if (this.state.openSubCategories) {
+      // reset filter
+      this.props.categorySelected.next('')
+    }
+
     this.setState({openSubCategories: !this.state.openSubCategories})
   }
 
