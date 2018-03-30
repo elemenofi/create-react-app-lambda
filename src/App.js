@@ -4,7 +4,14 @@ import './App.css';
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {products: null, displayProducts: {}, displayZoomProducts: {}, zoomIndex: 0};
+    this.state = {
+      products: null, 
+      categories: [],
+      subCategories: {},
+      displayProducts: {}, 
+      displayZoomProducts: {}, 
+      zoomIndex: 0
+    };
   }
 
   componentDidMount () {
@@ -22,20 +29,43 @@ class App extends Component {
     
     this.setState({products})
 
+    // products by name for displau
     let displayProducts = {}    
 
     products.data.forEach((product) => {
       displayProducts[product.name] = products.data.filter(prod => prod.name === product.name)
     })
 
-    this.setState({displayProducts})
+    // categories
+
+    let categories = products.data.reduce((prev, current) => {
+      return [current.metadata.category]
+    })
+
+    // subCategories
+
+    let subCategories = {}
+
+    categories.forEach(category => {
+      products.data.forEach((product) => {
+        if (product.metadata.category === category) {
+          const subCat = product.metadata['sub-category']
+
+          if (!subCategories[category] || !subCategories[category].length) {
+            subCategories[category] = [subCat]
+          } else if (!subCategories[category].includes(subCat)) {
+            subCategories[category].push(subCat)
+          }
+        }
+      })
+    })
+
+    this.setState({categories, subCategories, displayProducts})
   }
 
   render() {
-    let {displayProducts} = this.state
-
-    let categoryMenu = this.processDisplayCategories(displayProducts)    
-    let productsList = this.processDisplayProducts(displayProducts)
+    let categoryMenu = this.processDisplayCategories()    
+    let productsList = this.processDisplayProducts()
 
     return (
       <div className='catalog'>
@@ -49,7 +79,81 @@ class App extends Component {
     );
   }
 
-  checkoutProduct (product) {
+  processDisplayCategories () {
+    let categoryMenu = []
+
+    let {categories, subCategories} = this.state
+
+    categories.forEach(category => {
+      categoryMenu.push(
+        <CategoryItem 
+          key={'categoryMenuItem' + category} 
+          category={category} 
+          subCategories={subCategories}
+        />
+      )
+    })
+
+    return categoryMenu
+  }
+
+  processDisplayProducts () {
+    let productsList = []
+    
+    let {displayProducts, displayZoomProducts} = this.state    
+    
+    Object.keys(displayProducts).forEach(productName => {
+      const zoomIndex = displayZoomProducts[productName] || 0
+      const zoomProduct = displayProducts[productName][zoomIndex]
+
+      // big product
+      productsList.push(
+        <div className='product' key={zoomProduct.id}>
+          <h1>{productName}</h1>
+          <img src={zoomProduct.images[0]} alt={zoomProduct.name}/>
+        </div>
+      )
+
+      // pay button
+      productsList.push(
+        <button className='zoomProductBuy' key={'zoomProductBuy' + productName} onClick={this.handleBuyClick.bind(this, zoomProduct)}>
+          Buy {zoomProduct.name} {zoomProduct.skus.data[0].attributes.color}
+        </button>
+      )
+
+      const thumbnails = []
+
+      // thumbnails
+      displayProducts[productName].forEach(product => {
+        thumbnails.push(
+          <div key={product.id}
+            onClick={this.handleThumbnailClick.bind(this, product)} 
+            className='thumbnail'
+          >
+            <img src={product.images[0]} alt={product.name}/>
+          </div>       
+        )
+      })
+
+      productsList.push(<div key={'thumbnails' + productName} className='thumbnailWrapper'>{thumbnails}</div>)
+
+      productsList.push(<div key={'productBreak' + productName} className='productBreak'></div>)      
+    })
+
+    return productsList
+  }
+
+  handleThumbnailClick (product) {
+    let {displayZoomProducts} = this.state
+
+    const zoomIndex = this.state.displayProducts[product.name].indexOf(product)
+
+    displayZoomProducts[product.name] = zoomIndex
+
+    this.setState({displayZoomProducts})
+  }
+
+  handleBuyClick (product) {
     var handler = window.StripeCheckout.configure({
       key: 'pk_test_Os3pXXfffhGJXmRqNMsTwt4R',
       image: product.images[0],
@@ -76,66 +180,55 @@ class App extends Component {
       amount: product.skus.data[0].price
     });
   }
-
-  processDisplayCategories (displayProducts) {
-    return []
-  }
-
-  processDisplayProducts (displayProducts) {
-    let productsList = []
-    
-    let {displayZoomProducts} = this.state
-    
-    Object.keys(displayProducts).forEach(productName => {
-      const zoomIndex = displayZoomProducts[productName] || 0
-      const zoomProduct = displayProducts[productName][zoomIndex]
-
-      // big product
-      productsList.push(
-        <div className='product' key={zoomProduct.id}>
-          <h1>{productName}</h1>
-          <img src={zoomProduct.images[0]} alt={zoomProduct.name}/>
-        </div>
-      )
-
-      // pay button
-      productsList.push(
-        <button key={'zoomProductBuy' + productName} onClick={this.checkoutProduct.bind(this, zoomProduct)}>
-          Buy {zoomProduct.name} {zoomProduct.skus.data[0].attributes.color}
-        </button>
-      )
-
-      const thumbnails = []
-
-      // thumbnails
-      displayProducts[productName].forEach(product => {
-        thumbnails.push(
-          <div key={product.id}
-            onClick={this.handleClick.bind(this, product)} 
-            className='thumbnail'
-          >
-            <img src={product.images[0]} alt={product.name}/>
-          </div>       
-        )
-      })
-
-      productsList.push(<div key={'thumbnails' + productName} className='thumbnailWrapper'>{thumbnails}</div>)
-
-      productsList.push(<div key={'productBreak' + productName} className='productBreak'></div>)      
-    })
-
-    return productsList
-  }
-
-  handleClick (product) {
-    let {displayZoomProducts} = this.state
-
-    const zoomIndex = this.state.displayProducts[product.name].indexOf(product)
-
-    displayZoomProducts[product.name] = zoomIndex
-
-    this.setState({displayZoomProducts})
-  }
 }
 
 export default App;
+
+class CategoryItem extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      openSubCategories: false
+    }
+  }
+
+  handleItemClick (category) {
+    this.setState({openSubCategories: !this.state.openSubCategories})
+  }
+
+  handleSubItemClick (subCat) {
+    console.log(subCat)
+  }
+
+  render () {
+    const {category, subCategories} = this.props
+    const {openSubCategories} = this.state
+    const subMenu = []
+
+    if (openSubCategories) {
+      subCategories[category].forEach(subCat => {
+        subMenu.push(
+          <div 
+            key={'categoryMenuSubItem' + subCat}
+            className='categoryMenuSubItem' 
+            onClick={this.handleSubItemClick.bind(this, subCat)}
+          >
+            {subCat}
+          </div>
+        )
+      })
+    }
+
+    return <div className='categoryMenuItemContainer'>
+      <div 
+        className='categoryMenuItem' 
+        onClick={this.handleItemClick.bind(this, category)}
+      >
+        {category}
+      </div>
+      <div className='categoryMenuSubItemContainer'>
+        {subMenu}
+      </div>
+    </div>
+  }
+}
