@@ -106,8 +106,11 @@ button.zoomProductBuy:hover {
 }
 
 .categoryMenuItemContainer {
-  max-width: 140px;
+  max-width: 160px;
   position: relative;
+  display: inline-block;
+  min-width: 160px;
+  margin-right: 5px;  
 }
 .categoryMenuSubItemContainer {
   position: absolute;

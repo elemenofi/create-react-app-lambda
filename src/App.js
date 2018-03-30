@@ -52,8 +52,10 @@ class App extends Component {
 
     // categories
 
-    let categories = products.data.reduce((prev, current) => {
-      return [current.metadata.category]
+    let categories = []
+    
+    products.data.forEach((product) => {
+      if (!categories.includes(product.metadata.category)) categories.push(product.metadata.category)
     })
 
     // subCategories
