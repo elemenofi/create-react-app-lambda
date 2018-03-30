@@ -15,7 +15,6 @@ h1 {
   text-align: left;
 }
 
-
 #root {
   position: relative;
   width: 100%;
@@ -78,6 +77,7 @@ button {
   display: block;
   font-family: 'Garamond';  
   margin: 16px auto;
+  max-width: 320px;
 }
 
 button:hover {
