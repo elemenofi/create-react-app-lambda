@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
+import {Subject} from 'rxjs/Subject'
 import './App.css';
 
 class App extends Component {
   constructor(props) {
     super(props);
+
     this.state = {
       products: null, 
       categories: [],
@@ -12,28 +14,40 @@ class App extends Component {
       displayZoomProducts: {}, 
       zoomIndex: 0
     };
+
+    this.categorySelected$ = new Subject()
   }
 
   componentDidMount () {
-    console.log('Executing Stripe API request for products')
+    this.getProducts()
     
-    fetch('/.netlify/functions/products')
-      .then(response => response.json())
-      .then(json => this.processProducts(json));
+    this.categorySelected$.subscribe(subCat => {
+      this.processProducts(subCat)
+    })
   }
 
-  processProducts (json) {
-    const products = JSON.parse(json.products)
+  getProducts () {    
+    fetch('/.netlify/functions/products')
+      .then(response => response.json())
+      .then(json => {
+        this.setState({products: JSON.parse(json.products)})
+        this.processProducts()
+      });
+  }
 
+  processProducts (subCat) {
+    let {products} = this.state
     console.log('Products received from Stripe', products)
     
-    this.setState({products})
-
-    // products by name for displau
+    // products by name for display
     let displayProducts = {}    
 
     products.data.forEach((product) => {
-      displayProducts[product.name] = products.data.filter(prod => prod.name === product.name)
+      if (!subCat || (subCat && product.metadata['sub-category'] === subCat)) {
+        displayProducts[product.name] = products.data.filter(prod => {
+          return prod.name === product.name
+        })
+      }
     })
 
     // categories
@@ -90,6 +104,7 @@ class App extends Component {
           key={'categoryMenuItem' + category} 
           category={category} 
           subCategories={subCategories}
+          categorySelected={this.categorySelected$}
         />
       )
     })
@@ -97,10 +112,10 @@ class App extends Component {
     return categoryMenu
   }
 
-  processDisplayProducts () {
+  processDisplayProducts (subCat = '') {
     let productsList = []
     
-    let {displayProducts, displayZoomProducts} = this.state    
+    let {displayProducts, displayZoomProducts} = this.state
     
     Object.keys(displayProducts).forEach(productName => {
       const zoomIndex = displayZoomProducts[productName] || 0
@@ -197,7 +212,8 @@ class CategoryItem extends Component {
   }
 
   handleSubItemClick (subCat) {
-    console.log(subCat)
+    this.setState({openSubCategories: !this.state.openSubCategories})
+    this.props.categorySelected.next(subCat)
   }
 
   render () {

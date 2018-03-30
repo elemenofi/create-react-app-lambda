@@ -115,7 +115,6 @@ button.zoomProductBuy:hover {
 }
 
 div.categoryMenuItem, div.categoryMenuSubItem {
-  border-radius: 4px;
   color: #666666;
   font-size: 20px;
   padding: 14px 20px 16px 20px;
@@ -128,9 +127,6 @@ div.categoryMenuItem, div.categoryMenuSubItem {
   cursor: pointer;
   background-color: white;
   text-align: center;
-  border-color: rgb(216, 216, 216) rgb(209, 209, 209) rgb(186, 186, 186);
-  border-style: solid;
-  border-width: 1px;
 }
 
 div.categoryMenuSubItem {
