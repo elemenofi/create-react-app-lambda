@@ -4,7 +4,7 @@ import './App.css';
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {products: null, productsDisplay: {}, zoomsDisplay: {}, zoomIndex: 0};
+    this.state = {products: null, displayProducts: {}, displayZoomProducts: {}, zoomIndex: 0};
   }
 
   componentDidMount () {
@@ -22,25 +22,29 @@ class App extends Component {
     
     this.setState({products})
 
-    let productsDisplay = {}    
+    let displayProducts = {}    
 
     products.data.forEach((product) => {
-      productsDisplay[product.name] = products.data.filter(prod => prod.name === product.name)
+      displayProducts[product.name] = products.data.filter(prod => prod.name === product.name)
     })
 
-    this.setState({productsDisplay})
+    this.setState({displayProducts})
   }
 
   render() {
-    let {productsDisplay} = this.state
+    let {displayProducts} = this.state
 
-    let productsList = []
-    
-    productsList = this.processDisplayProducts(productsDisplay, productsList)
+    let categoryMenu = this.processDisplayCategories(displayProducts)    
+    let productsList = this.processDisplayProducts(displayProducts)
 
     return (
-      <div className='productList'>
-        {productsList}
+      <div className='catalog'>
+        <div className='categoryMenu'>
+          {categoryMenu}
+        </div>
+        <div className='productList'>
+          {productsList}
+        </div>
       </div>
     );
   }
@@ -50,6 +54,7 @@ class App extends Component {
       key: 'pk_test_Os3pXXfffhGJXmRqNMsTwt4R',
       image: product.images[0],
       locale: 'auto',
+      billingAddress: true,
       shippingAddress: true,
       token: (token) => {
         console.log(token)
@@ -72,23 +77,30 @@ class App extends Component {
     });
   }
 
-  processDisplayProducts (productsDisplay, productsList) {
-    let {zoomsDisplay} = this.state
+  processDisplayCategories (displayProducts) {
+    return []
+  }
+
+  processDisplayProducts (displayProducts) {
+    let productsList = []
     
-    Object.keys(productsDisplay).forEach(productName => {
-      const zoomIndex = zoomsDisplay[productName] || 0
-      const zoomProduct = productsDisplay[productName][zoomIndex]
+    let {displayZoomProducts} = this.state
+    
+    Object.keys(displayProducts).forEach(productName => {
+      const zoomIndex = displayZoomProducts[productName] || 0
+      const zoomProduct = displayProducts[productName][zoomIndex]
 
       // big product
       productsList.push(
-        <div className='product'>
+        <div className='product' key={zoomProduct.id}>
           <h1>{productName}</h1>
           <img src={zoomProduct.images[0]} alt={zoomProduct.name}/>
         </div>
       )
 
+      // pay button
       productsList.push(
-        <button onClick={this.checkoutProduct.bind(this, zoomProduct)}>
+        <button key={'zoomProductBuy' + productName} onClick={this.checkoutProduct.bind(this, zoomProduct)}>
           Buy {zoomProduct.name} {zoomProduct.skus.data[0].attributes.color}
         </button>
       )
@@ -96,9 +108,9 @@ class App extends Component {
       const thumbnails = []
 
       // thumbnails
-      productsDisplay[productName].forEach(product => {
+      displayProducts[productName].forEach(product => {
         thumbnails.push(
-          <div 
+          <div key={product.id}
             onClick={this.handleClick.bind(this, product)} 
             className='thumbnail'
           >
@@ -107,22 +119,22 @@ class App extends Component {
         )
       })
 
-      productsList.push(<div className='thumbnailWrapper'>{thumbnails}</div>)
+      productsList.push(<div key={'thumbnails' + productName} className='thumbnailWrapper'>{thumbnails}</div>)
 
-      productsList.push(<div className='productsBreak'></div>)      
+      productsList.push(<div key={'productBreak' + productName} className='productBreak'></div>)      
     })
 
     return productsList
   }
 
   handleClick (product) {
-    let {zoomsDisplay} = this.state
+    let {displayZoomProducts} = this.state
 
-    const zoomIndex = this.state.productsDisplay[product.name].indexOf(product)
+    const zoomIndex = this.state.displayProducts[product.name].indexOf(product)
 
-    zoomsDisplay[product.name] = zoomIndex
+    displayZoomProducts[product.name] = zoomIndex
 
-    this.setState({zoomsDisplay})
+    this.setState({displayZoomProducts})
   }
 }
 
