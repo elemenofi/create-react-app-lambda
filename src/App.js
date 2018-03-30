@@ -132,25 +132,27 @@ class App extends Component {
       // pay button
       productsList.push(
         <button className='zoomProductBuy' key={'zoomProductBuy' + productName} onClick={this.handleBuyClick.bind(this, zoomProduct)}>
-          Buy {zoomProduct.name} {zoomProduct.skus.data[0].attributes.color}
+          Buy {zoomProduct.name} {(displayProducts[zoomProduct.name].length > 1) ? zoomProduct.skus.data[0].attributes.color : ''}
         </button>
       )
 
       const thumbnails = []
 
-      // thumbnails
-      displayProducts[productName].forEach(product => {
-        thumbnails.push(
-          <div key={product.id}
-            onClick={this.handleThumbnailClick.bind(this, product)} 
-            className='thumbnail'
-          >
-            <img src={product.images[0]} alt={product.name}/>
-          </div>       
-        )
-      })
+      if (displayProducts[productName].length > 1) {
+        // thumbnails
+        displayProducts[productName].forEach(product => {
+          thumbnails.push(
+            <div key={product.id}
+              onClick={this.handleThumbnailClick.bind(this, product)} 
+              className='thumbnail'
+            >
+              <img src={product.images[0]} alt={product.name}/>
+            </div>       
+          )
+        })
 
-      productsList.push(<div key={'thumbnails' + productName} className='thumbnailWrapper'>{thumbnails}</div>)
+        productsList.push(<div key={'thumbnails' + productName} className='thumbnailWrapper'>{thumbnails}</div>)
+      }
 
       productsList.push(<div key={'productBreak' + productName} className='productBreak'></div>)      
     })
