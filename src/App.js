@@ -50,6 +50,7 @@ class App extends Component {
       key: 'pk_test_Os3pXXfffhGJXmRqNMsTwt4R',
       image: product.images[0],
       locale: 'auto',
+      shippingAddress: true,
       token: (token) => {
         console.log(token)
         fetch(`/.netlify/functions/order?sku=${product.skus.data[0].id}&curr=${product.skus.data[0].currency}&token=${token.id}&email=${token.email}`)
