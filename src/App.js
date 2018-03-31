@@ -34,7 +34,8 @@ class App extends Component {
   getProducts () {
     let oldResponse = window.localStorage.getItem('response')
 
-    if (!oldResponse) {
+    if (oldResponse) {
+      console.log('Using an old list of products')
       const response = JSON.parse(oldResponse)
       const products = JSON.parse(response.products)
 
