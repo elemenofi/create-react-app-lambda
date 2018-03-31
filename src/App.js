@@ -34,15 +34,15 @@ class App extends Component {
   getProducts () {
     let oldResponse = window.localStorage.getItem('response')
 
-    if (oldResponse) {
-      console.log('Using an old list of products')
-      const response = JSON.parse(oldResponse)
-      const products = JSON.parse(response.products)
+    // if (oldResponse) {
+    //   console.log('Using an old list of products')
+    //   const response = JSON.parse(oldResponse)
+    //   const products = JSON.parse(response.products)
 
-      this.setState({products: products}, () => {
-        this.processProducts()            
-      })     
-    } else {
+    //   this.setState({products: products}, () => {
+    //     this.processProducts()            
+    //   })     
+    // } else {
       fetch('/.netlify/functions/products')
         .then(response => response.json())
         .then(json => {
@@ -54,7 +54,7 @@ class App extends Component {
             this.processProducts()                      
           })
         });
-    }
+    // }
   }
 
   processProducts (cat) {
@@ -145,8 +145,12 @@ class App extends Component {
     let productsList = []
     
     let {displayProducts, displayZoomProducts} = this.state
+
+    let displayProductsKeys = Object.keys(displayProducts).reverse()
+    const firstProducts = displayProductsKeys.splice(2, 3)
+    displayProductsKeys = firstProducts.concat(displayProductsKeys)
     
-    Object.keys(displayProducts).forEach(productName => {
+    displayProductsKeys.forEach(productName => {
       const zoomIndex = displayZoomProducts[productName] || 0
       const zoomProduct = displayProducts[productName][zoomIndex]
 

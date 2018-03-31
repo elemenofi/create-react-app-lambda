@@ -68,7 +68,6 @@ h1 {
   padding: 16px 16px 48px;
   background-color: white;
   text-align: center;
-  min-height: 350px;
 }
 
 .product img {
@@ -94,7 +93,7 @@ h1 {
 .thumbnail {
   display: inline-block;
   margin: 16px 8px 0;
-  max-width: 60px;
+  max-width: 45px;
 }
 
 .thumbnail img {
