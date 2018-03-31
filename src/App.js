@@ -15,35 +15,55 @@ class App extends Component {
       zoomIndex: 0
     };
 
+    this.subCategorySelected$ = new Subject()
     this.categorySelected$ = new Subject()
   }
 
   componentDidMount () {
     this.getProducts()
     
-    this.categorySelected$.subscribe(subCat => {
+    this.subCategorySelected$.subscribe(subCat => {
       this.processProducts(subCat)
     })
+
+    this.categorySelected$.subscribe(cat => {
+      this.processProducts(cat)
+    })  
   }
 
-  getProducts () {    
-    fetch('/.netlify/functions/products')
-      .then(response => response.json())
-      .then(json => {
-        this.setState({products: JSON.parse(json.products)})
-        console.log('Products received from Stripe', this.state.products)    
-        this.processProducts()
-      });
+  getProducts () {
+    let oldResponse = window.localStorage.getItem('response')
+
+    if (!oldResponse) {
+      const response = JSON.parse(oldResponse)
+      const products = JSON.parse(response.products)
+
+      this.setState({products: products}, () => {
+        this.processProducts()            
+      })     
+    } else {
+      fetch('/.netlify/functions/products')
+        .then(response => response.json())
+        .then(json => {
+          window.localStorage.setItem('response', JSON.stringify(json))
+
+          const products = JSON.parse(json.products)
+          
+          this.setState({products: products}, () => {
+            this.processProducts()                      
+          })
+        });
+    }
   }
 
-  processProducts (subCat) {
+  processProducts (cat) {
     let {products} = this.state
-    
+
     // products by name for display
     let displayProducts = {}    
 
     products.data.forEach((product) => {
-      if (!subCat || (subCat && product.metadata['sub-category'] === subCat)) {
+      if (!cat || ((cat && product.metadata['sub-category'] === cat) || cat && product.metadata.category === cat)) {
         displayProducts[product.name] = products.data.filter(prod => {
           return prod.name === product.name
         })
@@ -67,9 +87,9 @@ class App extends Component {
         if (product.metadata.category === category) {
           const subCat = product.metadata['sub-category']
 
-          if (!subCategories[category] || !subCategories[category].length) {
+          if (subCat && (!subCategories[category] || !subCategories[category].length)) {
             subCategories[category] = [subCat]
-          } else if (!subCategories[category].includes(subCat)) {
+          } else if (subCat && !subCategories[category].includes(subCat)) {
             subCategories[category].push(subCat)
           }
         }
@@ -84,12 +104,17 @@ class App extends Component {
     let productsList = this.processDisplayProducts()
 
     return (
-      <div className='catalog'>
-        <div className='categoryMenu'>
-          {categoryMenu}
+      <div className='site'>
+        <div className='main'>
+          <img className='logo' src='./logo.jpeg' alt='axeco-logo' />
         </div>
-        <div className='productList'>
-          {productsList}
+        <div className='catalog container'>
+          <div className='categoryMenu'>
+            {categoryMenu}
+          </div>
+          <div className='productList'>
+            {productsList}
+          </div>
         </div>
       </div>
     );
@@ -100,12 +125,13 @@ class App extends Component {
 
     let {categories, subCategories} = this.state
 
-    categories.forEach(category => {
+    categories.reverse().forEach(category => {
       categoryMenu.push(
         <CategoryItem 
           key={'categoryMenuItem' + category} 
           category={category} 
           subCategories={subCategories}
+          subCategorySelected={this.subCategorySelected$}
           categorySelected={this.categorySelected$}
         />
       )
@@ -126,7 +152,7 @@ class App extends Component {
       // big product
       productsList.push(
         <div className='product' key={zoomProduct.id}>
-          <h1>{productName}</h1>
+          <h1 className='mini-container'>{productName}</h1>
           <img src={zoomProduct.images[0]} alt={zoomProduct.name}/>
         </div>
       )
@@ -210,10 +236,16 @@ class CategoryItem extends Component {
     }
   }
 
-  handleItemClick (category) {
+  handleItemClick () {
+    const {category, subCategories} = this.props
+    
+    if (!subCategories[category] || subCategories[category].length <= 1) {
+      this.props.categorySelected.next(category)
+    }    
+
     if (this.state.openSubCategories) {
       // reset filter
-      this.props.categorySelected.next('')
+      this.props.subCategorySelected.next('')
     }
 
     this.setState({openSubCategories: !this.state.openSubCategories})
@@ -221,7 +253,7 @@ class CategoryItem extends Component {
 
   handleSubItemClick (subCat) {
     this.setState({openSubCategories: !this.state.openSubCategories})
-    this.props.categorySelected.next(subCat)
+    this.props.subCategorySelected.next(subCat)
   }
 
   render () {
@@ -229,7 +261,7 @@ class CategoryItem extends Component {
     const {openSubCategories} = this.state
     const subMenu = []
 
-    if (openSubCategories) {
+    if (openSubCategories && subCategories[category] && subCategories[category].length) {
       subCategories[category].forEach(subCat => {
         subMenu.push(
           <div 
@@ -246,7 +278,7 @@ class CategoryItem extends Component {
     return <div className='categoryMenuItemContainer'>
       <div 
         className='categoryMenuItem' 
-        onClick={this.handleItemClick.bind(this, category)}
+        onClick={this.handleItemClick.bind(this)}
       >
         {category}
       </div>

@@ -8,15 +8,43 @@ body {
   position: absolute;
 }
 
+.site {
+}
+
+.container {
+  max-width: 640px;
+  width: 90%;
+  margin: 0 auto;
+}
+
+.mini-container {
+  max-width: 240px;  
+}
+
+.main {
+  margin: 0 auto;
+  padding: 64px 32px;
+  background-image: url("./background.jpg");
+  background-size: cover;
+  background-position: bottom;
+  text-align: left;
+}
+
+.logo {
+  max-width: 200px;
+  margin: 0 auto;
+  display: block;
+  padding: 32px;
+  background-color: white;
+}
+
 h1 {
-  text-indent: 16px;
   font-size: 26px;
   color: #666666;
   margin: 16px auto;
   text-align: center;
   text-transform: uppercase;
   border-bottom: 1px solid #999999;
-  max-width: 240px;
   padding-bottom: 16px;
 }
 
@@ -25,17 +53,19 @@ h1 {
   width: 100%;
 }
 
+.catalog {
+  margin: 0 auto;
+  display: block;
+}
+
 .productList {
   padding-top: 16px;
-  width: 90%;
   margin: 0 auto;
 }
 
 .product {
-  width: 90%;
-  max-width: 640px;
   margin: 16px auto 0;
-  padding: 16px 16px 64px;
+  padding: 16px 16px 56px;
   background-color: white;
   text-align: center;
   min-height: 350px;
@@ -49,14 +79,12 @@ h1 {
 
 .product button {
   display: block;
-  width: 90%;
+
   margin: 16px auto;
   padding: 8px 0;
 }
 
 .thumbnailWrapper {
-  width: 90%;
-  max-width: 640px;
   margin: 0 auto 32px;
   padding: 16px 16px 32px;
   text-align: center;
@@ -64,34 +92,33 @@ h1 {
 }
 
 .thumbnail {
-  width: 90px;
   display: inline-block;
   margin: 16px 8px 0;
+  max-width: 60px;
 }
 
 .thumbnail img {
-  max-width: 90%;
+  max-width: 90%;  
 }
 
 button.zoomProductBuy {
-  background: #888888;
-  border-radius: 4px;
-  color: #ffffff;
+  color: #666666;
   font-size: 20px;
   padding: 14px 20px 16px 20px;
   text-decoration: none;
-  width: 90%;
   display: block;
   font-family: 'Garamond';  
-  margin: 32px auto;
-  max-width: 320px;
+  margin: 32px auto 32px;
   font-variant: small-caps;
   text-transform: lowercase;
   cursor: pointer;
+  background: none;
+  border: none;
+  background-color: white;
+  text-align: center;
 }
 
 button.zoomProductBuy:hover {
-  background: #666666;
   text-decoration: none;
 }
 
@@ -100,20 +127,21 @@ button.zoomProductBuy:hover {
 }
 
 .categoryMenu {
-  width: 90%;
-  max-width: 656px;
   margin: 0 auto;
+  padding: 16px;
+  position: relative;
 }
 
 .categoryMenuItemContainer {
-  max-width: 160px;
+  width: 50%;
   position: relative;
   display: inline-block;
-  min-width: 160px;
-  margin-right: 5px;  
+  min-width: 152px;
 }
+
 .categoryMenuSubItemContainer {
   position: absolute;
+  z-index: 9999;
   width: 100%;
 }
 
@@ -124,16 +152,22 @@ div.categoryMenuItem, div.categoryMenuSubItem {
   text-decoration: none;
   display: block;
   font-family: 'Garamond';  
-  margin: 32px 0 0;
+  margin: 32px 2px 0;
   font-variant: small-caps;
   text-transform: lowercase;
   cursor: pointer;
   background-color: white;
   text-align: center;
+  font-weight: bold;
+  box-shadow: inset 0 0 3px #888;
 }
 
 div.categoryMenuSubItem {
   margin-top: 0;
+  font-weight: normal;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 
