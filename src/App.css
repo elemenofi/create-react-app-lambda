@@ -134,7 +134,7 @@ button.zoomProductBuy:hover {
   width: 50%;
   position: relative;
   display: inline-block;
-  min-width: 152px;
+  min-width: 128px;
 }
 
 .categoryMenuSubItemContainer {
